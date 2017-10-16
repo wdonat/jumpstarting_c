@@ -48,6 +48,21 @@ void allFlash(int leds[])
     }
 }
 
+void youWin(int leds[])
+{
+  int LED, i;
+  for (i=0; i<3; i++)
+    {
+      for (LED=0; LED<5; LED++)
+	{
+	  gpioWrite(leds[LED], 1);
+	  time_sleep(0.1);
+	  gpioWrite(leds[LED], 0);
+	  time_sleep(0.1);
+	}
+    }
+}
+
 int getPlayerTurn()
 {
   while(1)
@@ -59,6 +74,7 @@ int getPlayerTurn()
       else if (gpioRead(21) == 0) return 21;
     }
 }
+
 
 int main()
 {
@@ -95,7 +111,7 @@ int main()
   int turns;
 
   // counter variable
-  int i, x, y;
+  int i, x, compareSteps;
   
   // Set up buttons
   gpioSetMode(butOne, PI_INPUT);
@@ -147,7 +163,7 @@ int main()
       time_sleep(1);
 
       // simon[] now contains turns-long list of lit LEDs
-      for (y=0; y<turns; y++)
+      for (compareSteps=0; compareSteps<turns; compareSteps++)
 	{
 	  i = getPlayerTurn();
 	  switch(i)
@@ -156,7 +172,7 @@ int main()
 	      gpioWrite(ledOne, 1);
 	      time_sleep(0.5);
 	      gpioWrite(ledOne, 0);
-	      if(simon[y] != ledOne)
+	      if(simon[compareSteps] != ledOne)
 		{
 		  allFlash(ledArray);
 		  printf("You lose\n");
@@ -167,7 +183,7 @@ int main()
 	      gpioWrite(ledTwo, 1);
 	      time_sleep(0.5);
 	      gpioWrite(ledTwo, 0);
-	      if(simon[y] != ledTwo)
+	      if(simon[compareSteps] != ledTwo)
 		{
 		  allFlash(ledArray);
 		  printf("You lose\n");
@@ -178,7 +194,7 @@ int main()
 	      gpioWrite(ledThr, 1);
 	      time_sleep(0.5);
 	      gpioWrite(ledThr, 0);
-	      if(simon[y] != ledThr)
+	      if(simon[compareSteps] != ledThr)
 		{
 		  allFlash(ledArray);
 		  printf("You lose\n");
@@ -189,7 +205,7 @@ int main()
 	      gpioWrite(ledFor, 1);
 	      time_sleep(0.5);
 	      gpioWrite(ledFor, 0);
-	      if(simon[y] != ledFor)
+	      if(simon[compareSteps] != ledFor)
 		{
 		  allFlash(ledArray);
 		  printf("You lose\n");
@@ -200,7 +216,7 @@ int main()
 	      gpioWrite(ledFiv, 1);
 	      time_sleep(0.5);
 	      gpioWrite(ledFiv, 0);
-	      if(simon[y] != ledFiv)
+	      if(simon[compareSteps] != ledFiv)
 		{
 		  allFlash(ledArray);
 		  printf("You lose\n");
@@ -211,22 +227,11 @@ int main()
 	}
       time_sleep(1);
     }
-  gpioTerminate();
-}
+  // If you've reached this far, you've won
+  printf("You won!\n");
+  youWin(ledArray);
   
-
-
-
-//  while (1)
-//  {
-//    allOff(ledArray);
-//    for (x=0; x<5; x++)
-//	{
-//	  if (gpioRead(buttonArray[x]) == 0)
-//	    {
-//	      gpioWrite(ledArray[x], 1);
-//	    }
-//	  else continue;
-//	}
-//  }
+  gpioTerminate();
+} // end main
+  
   
